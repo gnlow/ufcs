@@ -1,11 +1,11 @@
-type Ufcs<C extends {"prototype": any}> = {
-    [K in keyof C["prototype"]]:
-        C["prototype"][K] extends (...args: any[]) => any
-            ? (...args: Parameters<C["prototype"][K]>) => (_this: C) => ReturnType<C["prototype"][K]>
+export type Ufcs<C> = {
+    [K in keyof C]:
+        C[K] extends (...args: any[]) => any
+            ? (...args: Parameters<C[K]>) => (_this: C) => ReturnType<C[K]>
             : never
-} & C
+} & { new (): C }
 
-export const ufcs = <C extends {"prototype": unknown}>(_class: C) => {
+export const ufcs = <C>(_class: { new (): C }) => {
     Object.getOwnPropertyNames(_class.prototype)
         .forEach(prop => {
             if (prop != "constructor") {
@@ -16,12 +16,3 @@ export const ufcs = <C extends {"prototype": unknown}>(_class: C) => {
         })
     return _class as unknown as Ufcs<C>
 }
-
-const Duck = ufcs(class Duck {
-    quack(num: number) {
-        console.log("Quack!", num)
-    }
-})
-const duck = new Duck
-Duck.quack(123)(duck); // Quack! 123
-duck.quack(123) // Quack! 123
