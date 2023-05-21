@@ -1,7 +1,8 @@
 # ufcs
+Unified Function Call Syntax
 
 ```ts
-import { ufcs } from "./mod.ts"
+import { ufcs } from "https://deno.land/x/ufcs/mod.ts"
 
 const Duck = ufcs(class Duck {
     quack(num: number) {
